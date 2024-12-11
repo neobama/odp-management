@@ -4,26 +4,23 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateClientsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('clients', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->foreignId('odp_id')->constrained('odps')->onDelete('cascade');
-            $table->timestamps();
-        });        
+            $table->id(); // Primary key
+            $table->string('name'); // Nama klien
+            $table->foreignId('odp_id') // Foreign key ke tabel ODP
+                  ->constrained('odps')
+                  ->onDelete('cascade'); // Hapus klien jika ODP dihapus
+            $table->timestamps(); // created_at dan updated_at
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('client');
+        Schema::dropIfExists('clients');
     }
-};
+}
+
