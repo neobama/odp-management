@@ -29,44 +29,7 @@ ODP Management System is a Laravel-based application designed to manage ODP (Opt
 - Composer
 - Node.js & npm
 - MySQL or other supported database
-
-### Steps
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/odp-management.git
-   cd odp-management
-   ```
-
-2. Install dependencies:
-   ```bash
-   composer install
-   npm install
-   npm run dev
-   ```
-
-3. Configure the environment:
-   - Copy the `.env.example` file to `.env`:
-     ```bash
-     cp .env.example .env
-     ```
-   - Set the database credentials and other configurations in the `.env` file.
-
-4. Generate the application key:
-   ```bash
-   php artisan key:generate
-   ```
-
-5. Run migrations and seeders:
-   ```bash
-   php artisan migrate --seed
-   ```
-
-6. Start the development server:
-   ```bash
-   php artisan serve
-   ```
-
-7. Access the application at `http://127.0.0.1:8000`.
+  
 
 ## Usage
 
