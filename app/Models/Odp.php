@@ -11,6 +11,10 @@ class Odp extends Model
 
     protected $fillable = ['name', 'latitude', 'longitude', 'capacity'];
 
+    protected $attributes = [
+        'capacity' => 16,
+    ];
+    
     public function clients()
     {
         return $this->hasMany(Client::class);

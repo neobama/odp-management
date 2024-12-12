@@ -20,18 +20,33 @@ class OdpController extends Controller
 
     public function store(Request $request)
     {
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'latitude' => 'required|numeric',
-        'longitude' => 'required|numeric',
-        'capacity' => 'required|integer|min:1',
-    ]);
-
-    Odp::create($request->all());
-
-    return redirect()->route('odps.index')->with('success', 'ODP created successfully.');
+        // Log data yang diterima
+        \Log::info('Received data: ' . json_encode($request->all()));
+    
+        // Validasi data
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ]);
+    
+        // Tambahkan default capacity jika tidak disertakan
+        $data = $request->all();
+        $data['capacity'] = $data['capacity'] ?? 0;
+    
+        // Simpan data ke database
+        try {
+            Odp::create($data);
+            \Log::info('ODP successfully saved.');
+        } catch (\Exception $e) {
+            \Log::error('Error saving ODP: ' . $e->getMessage());
+            return redirect()->route('odps.index')->with('error', 'Failed to save ODP.');
+        }
+    
+        // Redirect kembali
+        return redirect()->route('odps.index')->with('success', 'ODP added successfully.');
     }
-
+    
     public function edit(Odp $odp)
     {
         return view('odps.edit', compact('odp'));
@@ -50,22 +65,29 @@ class OdpController extends Controller
         return redirect()->route('odps.index')->with('success', 'ODP updated successfully.');
     }
     
+    public function show($id)
+    {
+    $odp = Odp::with('clients')->findOrFail($id);
+
+    return view('odps.show', compact('odp'));
+    }
+    
     public function destroy(Odp $odp)
     {
         $odp->delete();
         return redirect()->route('odps.index')->with('success', 'ODP deleted successfully.');
     }
     public function summary(Request $request)
-    {
+    {   
     // Ambil kata kunci pencarian jika ada
     $search = $request->get('search');
-
-    // Hitung total ODP dan total klien
+    
+    // Query data summary
     $totalOdps = Odp::count();
     $totalClients = Odp::withCount('clients')->get()->sum('clients_count');
     $fullOdps = Odp::withCount('clients')->get()->filter(fn ($odp) => $odp->clients_count >= $odp->capacity)->count();
 
-    // Query data ODP dan filter berdasarkan pencarian
+    // Query data ODP untuk tabel dan peta
     $odps = Odp::with(['clients'])
         ->withCount('clients')
         ->when($search, function ($query, $search) {
@@ -78,6 +100,7 @@ class OdpController extends Controller
 
     return view('home', compact('totalOdps', 'totalClients', 'fullOdps', 'odps', 'search'));
     }
+
 
 
 }
