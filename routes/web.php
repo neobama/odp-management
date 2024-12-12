@@ -32,6 +32,9 @@ Route::middleware(['auth'])->group(function () {
         return view('welcome', compact('totalOdps', 'totalClients', 'fullOdps', 'odps', 'query'));
     })->name('home');
 
+    Route::get('/find-odp', [OdpController::class, 'findOdpPage'])->name('find.odp.page');
+    Route::post('/find-odp', [OdpController::class, 'findNearestOdp'])->name('find.nearest.odp');
+    Route::post('/find-nearest-odp', [OdpController::class, 'findNearestOdp'])->name('find.nearest.odp');
     Route::resource('odps', OdpController::class);
     Route::get('odps/{odp}/clients', [ClientController::class, 'manage'])->name('clients.manage');
     Route::post('odps/{odp}/clients', [ClientController::class, 'store'])->name('clients.store');

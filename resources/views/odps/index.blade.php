@@ -72,7 +72,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Inisialisasi peta
-        var map = L.map('map').setView([-6.2, 106.8], 13); // Default ke Jakarta
+        var map = L.map('map').setView([-6.200054, 106.856697], 20); // Default ke Matraman
 
         // Tambahkan tile layer dari OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

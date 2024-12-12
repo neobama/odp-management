@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Summary ODP Management</h1>
+    <h1 class="text-center mb-4">Welcome to ODP Management</h1>
 
     <!-- Summary Cards -->
     <div class="row text-center mb-4">
@@ -31,6 +31,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Map Container -->
+    <div id="home-map" style="height: 500px; border: 1px solid #ccc;" class="mb-4"></div>
 
     <!-- Search Form -->
     <form method="GET" action="{{ route('home') }}" class="mb-4">
@@ -87,4 +90,49 @@
         @endforelse
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Inisialisasi peta
+        const map = L.map('home-map').setView([-6.200054, 106.856697], 18);
+
+        // Tambahkan tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Data ODP dari server
+        const odps = @json($odps);
+
+        // Tambahkan marker ODP
+        odps.forEach(function (odp) {
+            if (odp.latitude && odp.longitude) {
+                // Hitung tingkat penggunaan kapasitas
+                const utilization = odp.clients_count / odp.capacity;
+
+                // Tentukan warna marker
+                let markerColor = 'green';
+                if (utilization >= 1) {
+                    markerColor = 'red'; // Full kapasitas
+                } else if (utilization >= 0.5) {
+                    markerColor = 'yellow'; // Setengah ke atas
+                }
+
+                // Tambahkan marker
+                L.circleMarker([odp.latitude, odp.longitude], {
+                    radius: 8,
+                    fillColor: markerColor,
+                    color: markerColor,
+                    weight: 1,
+                    fillOpacity: 0.8
+                }).addTo(map).bindPopup(`
+                    <strong>${odp.name}</strong><br>
+                    Capacity: ${odp.capacity}<br>
+                    Clients: ${odp.clients_count}
+                `);
+            }
+        });
+    });
+</script>
 @endsection
